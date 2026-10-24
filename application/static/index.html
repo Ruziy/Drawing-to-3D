@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Drawing-to-3D · локальный анализ</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script type="importmap">{"imports":{"three":"/static/vendor/three.module.js"}}</script>
+</head>
+<body>
+  <header><div><h1>Drawing-to-3D</h1><p>Чертёж → распознавание → проверяемая 3D-модель</p></div><span id="health">Проверка окружения…</span></header>
+  <main>
+    <section class="panel" aria-label="Чертёж">
+      <div class="toolbar secondary" hidden><label>Из проекта <select id="sample"><option value="">Выберите PDF…</option></select></label><button id="loadSample" disabled>Открыть</button></div>
+      <div class="toolbar"><label class="button" for="pdf">Загрузить PDF</label><input id="pdf" type="file" accept=".pdf,application/pdf"><button id="analyze" disabled>Анализировать и построить 3D</button><span id="filename">PDF до 25 МБ</span></div>
+      <div class="toolbar secondary"><label>Обработка <select id="analysisMode"><option value="hybrid">CV/OCR + локальная LLM</option><option value="classic">CV/OCR</option></select></label><label>Модель <select id="llmModel"><option value="">Проверка Ollama…</option></select></label><button id="refreshModels" type="button" title="Обновить список после установки модели">Обновить модели</button><span id="llmState">Проверка Ollama…</span><a id="llmReport" hidden>Отчёт LLM</a></div>
+      <div class="toolbar secondary"><button id="prev" disabled aria-label="Предыдущая страница">←</button><span id="pageLabel">Нет документа</span><button id="next" disabled aria-label="Следующая страница">→</button><label>Масштаб <select id="zoom"><option value="fit">По ширине</option><option value="0.75">75%</option><option value="1">100%</option><option value="1.5">150%</option><option value="2">200%</option></select></label><label><input type="checkbox" id="overlay" disabled> OCR и разметка</label></div>
+      <div id="paper" class="viewport"><p id="paperEmpty" class="empty">Загрузите инженерный чертёж.<br><small>Векторные и растровые PDF, все страницы.</small></p><img id="drawing" alt="Исходный чертёж" hidden></div>
+    </section>
+    <section class="panel" aria-label="3D-модель">
+      <div class="toolbar"><strong>3D-модель</strong><select id="modelVariant" aria-label="Вариант реконструкции"><option value="main">Основная модель</option><option value="simplified">Упрощённая геометрия</option></select><span id="modelState"></span><button id="resetCamera" disabled>Сброс камеры</button><a id="step" hidden>Скачать STEP</a><a id="fcstd" hidden>FCStd</a><a id="stl" hidden>STL</a></div>
+      <div id="viewer" class="viewport"><p id="modelEmpty" class="empty">Загрузите PDF и нажмите «Анализировать и построить 3D».</p></div>
+    </section>
+  </main>
+  <footer>
+    <div class="toolbar"><strong id="status" role="status" aria-live="polite">Готов к загрузке</strong><span id="counts">Размеров: — · Элементов: —</span><a id="download" hidden>Анализ JSON</a><a id="interpretation" hidden>Геометрия JSON</a><a id="cadIntent" hidden>CAD Intent</a><a id="validation" hidden>Валидация</a><a id="original" target="_blank" rel="noopener" hidden>Открыть PDF</a></div>
+    <p id="message" role="alert"></p><ul id="diagnostics"></ul>
+    <details id="dimensionDetails" hidden><summary>Извлечённые обозначения</summary><div class="tableWrap"><table><thead><tr><th>Стр.</th><th>Исходная запись</th><th>Тип</th><th>Номинал</th><th>Допуски</th><th>Статус</th></tr></thead><tbody id="dimensions"></tbody></table></div></details>
+    <small>Локальный OCR. Розовый — OCR; зелёный — размеры; синий — линии; оранжевый — области. partial_geometry: проверенное сечение с невосстановленными особенностями; ограничения — в отчёте.</small>
+  </footer>
+  <script type="module" src="/static/app.js"></script>
+</body>
+</html>
